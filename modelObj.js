@@ -108,7 +108,7 @@ Model.prototype.initParameters = function() {
 
     // on utilise des variables pour se rappeler quelles sont les transformations courantes
     // rotation, translation, scaling de l'objet
-    this.position = [0,0,0]; // position de l'objet dans l'espace 
+    this.position = [0,-0.8,0]; // position de l'objet dans l'espace
     this.rotation = 0.; // angle de rotation en radian autour de l'axe Y
     this.scale = 0.2; // mise à l'echelle (car l'objet est trop  gros par défaut)
 }
@@ -132,10 +132,25 @@ Model.prototype.setParameters = function(elapsed) {
 
 Model.prototype.move = function(x,y) {
     // faire bouger votre vaisseau ici. Exemple :
-    this.rotation += x*0.05; // permet de tourner autour de l'axe Y 
-    this.position[0] += x*0.1; // translation gauche/droite
-    this.position[1] += y*0.1; // translation haut/bas
-    
+    if(Math.abs(this.rotation) <= Math.PI/5){
+        this.rotation += x*0.05; // permet de tourner autour de l'axe Y
+    } else {
+        this.rotation = Math.PI/5 * Math.sign(this.rotation);
+    }
+    console.log(this.position[0])
+    if (Math.abs(this.position[0]) <= 4) {
+        this.position[0] += x*0.1; // translation gauche/droite
+    } else {
+        this.position[0] = 4 * Math.sign(this.position[0]);
+    }
+
+    if (Math.abs(this.position[1]) <= 4) {
+        this.position[1] += y*0.1; // translation haut/bas
+    } else {
+        this.position[1] = 4 * Math.sign(this.position[1]);
+    }
+
+
 }
 
 Model.prototype.getBBox = function() {
