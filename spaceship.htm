@@ -29,6 +29,7 @@
 
 
 
+
     </script>
 
     <script id="background-fs" type="x-shader/x-fragment">#version 300 es
@@ -116,6 +117,7 @@
 
 
 
+
     </script>
 
     <script id="model-vs" type="x-shader/x-vertex">#version 300 es
@@ -134,6 +136,7 @@
           gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * vec4(aVertexPosition, 1.0);
           vNormal = mat3(inverse(transpose(uViewMatrix * uModelMatrix)))*normalize(aVertexNormal);
       }
+
 
 
 
@@ -158,6 +161,7 @@
 
 
 
+
     </script>
 
     <script id="splat-vs" type="x-shader/x-vertex">#version 300 es
@@ -175,6 +179,7 @@
 	  // stockage de la coordonnee de texture
 	  vTextureCoord = aVertexCoord;
       }
+
 
 
 
@@ -204,20 +209,21 @@
 
 
 
+
     </script>
 
     <script type="text/javascript">
 
         var background;
+        var score = 0;
         var spaceship;
         var shootSampleArray = [];
+        var shootCount = 3;
         var enemies = [];
         var bonusArray = [];
         var ultimateShootOK = false;
         var fired;
         var tex;
-        var maxShoot = 3;
-
 
         function drawScene() {
             // initialisation du viewport
@@ -298,29 +304,40 @@
                 shootSample.clear();
             }
 
-            if (currentlyPressedKeys[32]) { // SPACE
-                var shootSample;
+            if (currentlyPressedKeys[70]) { // F
                 if (ultimateShootOK) {
                     ultimateShootOK = false;
+                    drawFireball(false);
+                    var shootSample;
                     shootSample = new Splat(texUltimate);
-                } else {
-                    shootSample = new Splat(tex);
-                }
 
-                // exemple: comment positionner un splat devant le vaisseau
-                var p = spaceship.getBBox(); // boite englobante du vaisseau sur l'�cran
-                var x = (p[0][0] + p[1][0]) / 2;
-                var y = p[1][1];
-                var z = p[1][2] + 0.005; // profondeur du splat (juste derri�re le vaisseau)
+                    var p = spaceship.getBBox(); // boite englobante du vaisseau sur l'�cran
+                    var x = (p[0][0] + p[1][0]) / 2;
+                    var y = p[1][1];
+                    var z = p[1][2] + 0.005; // profondeur du splat (juste derri�re le vaisseau)
 
-                if (!fired && shootSampleArray.length < maxShoot) {
-                    fired = true;
+
                     shootSample.setPosition(x, y, z);
                     shootSampleArray.push(shootSample);
-
                 }
+            }
+
+            if (currentlyPressedKeys[32]) { // SPACE
+                var shootSample;
+                if (!fired && shootCount > 0) {
+                    fired = true;
+                    shootSample = new Splat(tex);
+                    shootCount--;
+                    // exemple: comment positionner un splat devant le vaisseau
+                    var p = spaceship.getBBox(); // boite englobante du vaisseau sur l'�cran
+                    var x = (p[0][0] + p[1][0]) / 2;
+                    var y = p[1][1];
+                    var z = p[1][2] + 0.005; // profondeur du splat (juste derri�re le vaisseau)
 
 
+                    shootSample.setPosition(x, y, z);
+                    shootSampleArray.push(shootSample);
+                }
             }
 
             if (!currentlyPressedKeys[32]) {
@@ -365,7 +382,6 @@
 
         function spawnEnemy() {
 
-            console.log('Spawn enemy');
             // Generate a random x position.
             var randomXPosition = (Math.floor(Math.random() * 8) + 2) / 10;
             randomXPosition *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
@@ -386,7 +402,6 @@
         }
 
         function spawnBonus() {
-            console.log('Spawn bonus');
             // Generate a random x position.
             var randomXPosition = (Math.floor(Math.random() * 8) + 2) / 10;
             randomXPosition *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
@@ -452,6 +467,10 @@
                         shoot.clear();
                         shootSampleArray.splice(shootSampleArray.indexOf(shoot), 1);
                         enemies.splice(enemies.indexOf(enemy), 1);
+                        score = score + 1;
+                        if (score > 9) {
+                            setWinnerScreen();
+                        }
                     }
                 });
             });
@@ -465,8 +484,35 @@
                     ultimateShootOK = true;
                     bonus.clear();
                     bonusArray.splice(bonusArray.indexOf(bonus), 1);
+                    if (ultimateShootOK) {
+                        drawFireball(true);
+                    }
                 }
             });
+        }
+
+        function loadBallon() {
+            if (shootCount < 3) {
+                shootCount++;
+            }
+        }
+
+        function majUI() {
+            document.getElementById('score').innerHTML = score;
+        }
+
+        function setWinnerScreen() {
+            document.getElementById('game_over').style.display = str;
+        }
+
+        function drawFireball(afficher) {
+            var str;
+            if (afficher) {
+                str = 'block';
+            } else {
+                str = 'none'
+            }
+            document.getElementById('fire_ball_img').style.display = str;
         }
 
         function tick() {
@@ -476,6 +522,8 @@
             checkColisionsEnemies();
             checkColisionsBonus();
             animate();
+            console.log(shootCount);
+            majUI();
         }
 
 
@@ -517,6 +565,7 @@
             //Spawn ennemie
             setInterval(spawnEnemy, 5000);
             setInterval(spawnBonus, 2000);
+            setInterval(loadBallon, 2000);
 
             // dessine la scene
             tick();
@@ -530,13 +579,22 @@
 
 
 <body onload="webGLStart();">
+<div id="game_over">
+    <div id="winner_text">
+        <h1>GAME OVER</h1>
+        <p>VOUS AVEZ GAGN&#201; !!!</p>
+    </div>
+</div>
 <canvas id="SpaceShip" style="border: none;" width="800" height="800"></canvas>
 <div id="footer">
     <h2>Score</h2>
-    <div id="score">
-        <span>
+    <div id="score_container">
+        <span id="score">
             5
         </span>
+    </div>
+    <div id="fire_ball">
+        <img src="textures/ballon-in-fire.png" id="fire_ball_img" alt="fireball">
     </div>
     <div id="lifes">
         <div id="life1">

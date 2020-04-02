@@ -5,24 +5,35 @@
 
 #footer {
     background-color: darkgreen;
-    background-image: url("textures/soccer_field.png");
+    background: url("textures/field.png") no-repeat;
+    background-size: cover;
     position: absolute;
     height: 150px;
     width: 794px;
     border: 3px white solid;
 }
 
+#game_over {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 800px;
+    height: 800px;
+    background: url("textures/soccer_field.png") no-repeat;
+    background-size: cover;
+    display: none;
+}
 
-#score {
+#score_container {
     font-family: "Scoreboard";
     font-size: 44px;
-    width: 44px;
+    width: 55px;
     height: 55px;
     background-color: white;
     margin: 0 auto;
 }
 
-#score span {
+#score {
     margin-left: 10px;
 }
 
@@ -35,12 +46,43 @@ h2 {
     color: white;
 }
 
+#winner_text {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+h1 {
+    font-size: 90px;
+    font-family: "Scoreboard";
+    color: white;
+}
+
+p {
+    font-family: "Scoreboard";
+    font-size: 75px;
+    color: white;
+}
+
 #lifes {
     display: flex;
     flex-direction: row;
 }
 
 .img_life {
-    width: 33px;
-    height: 33px;
+    width: 64px;
+    height: 64px;
+}
+
+#fire_ball {
+    float: right;
+}
+
+#fire_ball_img {
+    height: 50px;
+    width: 42px;
+    display: none;
 }
