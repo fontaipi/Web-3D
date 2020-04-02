@@ -146,16 +146,20 @@
     <script id="model-fs" type="x-shader/x-fragment">#version 300 es
       // *** le fragment shader ***
       precision mediump float; // precision des nombres flottant
-      
+            vec3 flesh = vec3(1, 0.76, 0.64);
+
+
     in vec3 vNormal;
       out vec4 outColor;
+
+
 
       void main(void) {
           // la couleur est attribuee au fragment courant
 	  vec3 n = normalize(vNormal);
 
 	  // pour le moment, on affiche juste la normale
-          outColor = vec4(n,1.);
+          outColor = vec4(n[2]*flesh,1.);
       }
 
 
@@ -602,7 +606,7 @@
 <body onload="webGLStart();">
 <div id="game_over">
     <div id="winner_text">
-        <h1>GAME OVER</h1>
+        <h1>JEU TERMIN&#201;</h1>
         <p>VOUS AVEZ GAGN&#201; !!!</p>
     </div>
 </div>
