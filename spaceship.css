@@ -15,8 +15,8 @@
 
 #game_over {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 0;
+    left: 476px;
     width: 800px;
     height: 800px;
     background: url("textures/soccer_field.png") no-repeat;
@@ -73,8 +73,8 @@ p {
 }
 
 .img_life {
-    width: 64px;
-    height: 64px;
+    width: 44px;
+    height: 44px;
 }
 
 #fire_ball {
@@ -85,4 +85,25 @@ p {
     height: 50px;
     width: 42px;
     display: none;
+}
+
+#rejouer {
+    text-decoration: none;
+    font-family: "Scoreboard";
+    font-size: 33px;
+    padding: 5px;
+    height: 40px;
+    border-radius: 1rem;
+    color: white;
+    background-color: darkgreen;
+}
+
+html {
+    background: url("textures/field.png") no-repeat;
+    background-size: cover;
+}
+
+body {
+    margin: auto;
+    width: 50%;
 }

@@ -146,7 +146,6 @@
     <script id="model-fs" type="x-shader/x-fragment">#version 300 es
       // *** le fragment shader ***
       precision mediump float; // precision des nombres flottant
-            vec3 flesh = vec3(1, 0.76, 0.64);
 
 
     in vec3 vNormal;
@@ -158,6 +157,7 @@
           // la couleur est attribuee au fragment courant
 	  vec3 n = normalize(vNormal);
 
+      vec3 flesh = vec3(0.46, 0.28, 0.17);
 	  // pour le moment, on affiche juste la normale
           outColor = vec4(n[2]*flesh,1.);
       }
@@ -222,9 +222,11 @@
         var score = 0;
         var spaceship;
         var shootSampleArray = [];
+        var countSin = 0;
         var shootCount = 3;
         var enemies = [];
         var bonusArray = [];
+        var gardien;
         var ultimateShootOK = false;
         var fired;
         var tex;
@@ -266,6 +268,11 @@
                 item.sendUniformVariables();
                 item.draw();
             });
+
+            //dessin du Gardien
+            gl.useProgram(gardien.shader());
+            gardien.sendUniformVariables();
+            gardien.draw();
 
             gl.disable(gl.BLEND); // transparence d�sactiv�e
         }
@@ -381,7 +388,9 @@
                     shootSampleArray.splice(shootSampleArray.indexOf(item), 1);
                 }
             });
-
+            countSin += 0.01;
+            gardien.position[1] = (Math.sin(countSin)/4) + 0.4;// permet de déplacer le splat vers le haut au fil du temps
+            gardien.position[0] = Math.cos(countSin); // permet de déplacer le splat sur l'axe X
         }
 
         function spawnEnemy() {
@@ -421,6 +430,12 @@
 
             // Push your new enemy in the enemies array so you can render them all at once in the draw loop.
             bonusArray.push(bonus);
+        }
+
+        function spawnGardien() {
+            console.log("Spawn Gardien")
+            gardien = new Splat(textGant);
+            gardien.setPosition(0, 0, 0);
         }
 
         function colisionSplatSplat(splat1, splat2) {
@@ -477,6 +492,10 @@
                         }
                     }
                 });
+                if (colisionSplatSplat(gardien, shoot)) {
+                    shoot.clear();
+                    shootSampleArray.splice(shootSampleArray.indexOf(shoot), 1);
+                }
             });
         }
 
@@ -546,7 +565,6 @@
             checkColisionsEnemies();
             checkColisionsBonus();
             animate();
-            console.log(shootCount);
             majUI();
             drawBall();
         }
@@ -563,6 +581,7 @@
             texField = initTexture('textures/soccer_field.png');
             texUltimate = initTexture('textures/ballon-in-fire.png');
             texBonus = initTexture('textures/arrow-up.png');
+            textGant = initTexture('textures/gants-invictus.png');
 
             initBackgroundShader();
             initModelShader();
@@ -592,6 +611,9 @@
             setInterval(spawnBonus, 10000);
             setInterval(loadBallon, 2000);
 
+            //Gardien
+            spawnGardien();
+
             // dessine la scene
             tick();
         }
@@ -608,6 +630,7 @@
     <div id="winner_text">
         <h1>JEU TERMIN&#201;</h1>
         <p>VOUS AVEZ GAGN&#201; !!!</p>
+        <a id="rejouer" onclick="location.reload()">Rejouer</a>
     </div>
 </div>
 <canvas id="SpaceShip" style="border: none;" width="800" height="800"></canvas>
