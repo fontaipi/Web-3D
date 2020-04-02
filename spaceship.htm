@@ -1,7 +1,7 @@
 <html>
 <link rel="stylesheet" href="spaceship.css">
 <head>
-    <title>SpaceShip</title>
+    <title>Pogba vs Cage</title>
     <meta http-equiv="content-type" content="text/html; charset=windows-1252">
 
     <script type="text/javascript" src="gl-matrix.js"></script>
@@ -502,7 +502,7 @@
         }
 
         function setWinnerScreen() {
-            document.getElementById('game_over').style.display = str;
+            document.getElementById('game_over').style.display = 'block';
         }
 
         function drawFireball(afficher) {
@@ -515,6 +515,26 @@
             document.getElementById('fire_ball_img').style.display = str;
         }
 
+        function drawBall() {
+            if (shootCount === 3) {
+                document.getElementById('life1').style.display = 'block';
+                document.getElementById('life2').style.display = 'block';
+                document.getElementById('life3').style.display = 'block';
+            } else if (shootCount === 2) {
+                document.getElementById('life1').style.display = 'block';
+                document.getElementById('life2').style.display = 'block';
+                document.getElementById('life3').style.display = 'none';
+            } else if (shootCount === 1) {
+                document.getElementById('life1').style.display = 'block';
+                document.getElementById('life2').style.display = 'none';
+                document.getElementById('life3').style.display = 'none';
+            } else {
+                document.getElementById('life1').style.display = 'none';
+                document.getElementById('life2').style.display = 'none';
+                document.getElementById('life3').style.display = 'none';
+            }
+        }
+
         function tick() {
             requestAnimFrame(tick);
             handleKeys();
@@ -524,6 +544,7 @@
             animate();
             console.log(shootCount);
             majUI();
+            drawBall();
         }
 
 
@@ -563,8 +584,8 @@
             document.onkeyup = handleKeyUp;
 
             //Spawn ennemie
-            setInterval(spawnEnemy, 5000);
-            setInterval(spawnBonus, 2000);
+            setInterval(spawnEnemy, 3500);
+            setInterval(spawnBonus, 10000);
             setInterval(loadBallon, 2000);
 
             // dessine la scene
