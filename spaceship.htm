@@ -28,6 +28,7 @@
 
 
 
+
     </script>
 
     <script id="background-fs" type="x-shader/x-fragment">#version 300 es
@@ -98,18 +99,19 @@
       }
 
       void main(void) {
+      //rgb = (58, 137, 35)
+      vec3 vert = vec3(0.23, 0.53, 0.14);
+
 	  // décalage avec la variable uOffset
 	  vec2 p = vTextureCoord*2.0-vec2(1.0)+uOffset;
 
-	  float d = computeHeight(p); // profondeur au point p
+	  //float d = computeHeight(p); // profondeur au point p
 	  vec3 n = computeNormal(p); // normale au point p
 
-	  // affichage de la profondeur
-	  outColor = vec4(d,d,d,1.0);
-
 	  // affichage de la normale
-	  //outColor = vec4(n,1.0);
+	  outColor = vec4(vert*n[1]/0.40,1.);
       }
+
 
 
 
@@ -135,6 +137,7 @@
 
 
 
+
     </script>
 
     <script id="model-fs" type="x-shader/x-fragment">#version 300 es
@@ -151,6 +154,7 @@
 	  // pour le moment, on affiche juste la normale
           outColor = vec4(n,1.);
       }
+
 
 
 
@@ -171,6 +175,7 @@
 	  // stockage de la coordonnee de texture
 	  vTextureCoord = aVertexCoord;
       }
+
 
 
 
@@ -198,6 +203,7 @@
 
 
 
+
     </script>
 
     <script type="text/javascript">
@@ -206,6 +212,8 @@
         var spaceship;
         var shootSampleArray = [];
         var enemies = [];
+        var bonusArray = [];
+        var ultimateShootOK = false;
         var fired;
         var tex;
         var maxShoot = 3;
@@ -238,6 +246,12 @@
             });
 
             enemies.forEach((item) => {
+                gl.useProgram(item.shader());
+                item.sendUniformVariables();
+                item.draw();
+            });
+
+            bonusArray.forEach((item) => {
                 gl.useProgram(item.shader());
                 item.sendUniformVariables();
                 item.draw();
@@ -286,7 +300,12 @@
 
             if (currentlyPressedKeys[32]) { // SPACE
                 var shootSample;
-                shootSample = new Splat(tex);
+                if (ultimateShootOK) {
+                    ultimateShootOK = false;
+                    shootSample = new Splat(texUltimate);
+                } else {
+                    shootSample = new Splat(tex);
+                }
 
                 // exemple: comment positionner un splat devant le vaisseau
                 var p = spaceship.getBBox(); // boite englobante du vaisseau sur l'écran
@@ -298,6 +317,7 @@
                     fired = true;
                     shootSample.setPosition(x, y, z);
                     shootSampleArray.push(shootSample);
+
                 }
 
 
@@ -345,10 +365,10 @@
 
         function spawnEnemy() {
 
-            console.log('Spawn');
+            console.log('Spawn enemy');
             // Generate a random x position.
-            var randomXPosition = (Math.floor(Math.random()*8) + 2)/10;
-            randomXPosition *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+            var randomXPosition = (Math.floor(Math.random() * 8) + 2) / 10;
+            randomXPosition *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
 
             //Create a new Enemy instance and use above coordinates to place it in a random spot.
             //Fill the rest of this object like you did with var bullet = {...}.
@@ -365,14 +385,33 @@
             enemies.push(enemy);
         }
 
-        function colision(splat1, splat2) {
+        function spawnBonus() {
+            console.log('Spawn bonus');
+            // Generate a random x position.
+            var randomXPosition = (Math.floor(Math.random() * 8) + 2) / 10;
+            randomXPosition *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+
+            //Create a new Enemy instance and use above coordinates to place it in a random spot.
+            //Fill the rest of this object like you did with var bullet = {...}.
+            var bonus;
+            bonus = new Splat(texBonus);
+
+
+            bonus.setPosition(randomXPosition, -0.7, 0);
+
+
+            // Push your new enemy in the enemies array so you can render them all at once in the draw loop.
+            bonusArray.push(bonus);
+        }
+
+        function colisionSplatSplat(splat1, splat2) {
             var x1 = splat1.position[0];
             var y1 = splat1.position[1];
-            var r1 = splat1.height/2;
+            var r1 = splat1.height / 2;
 
             var x2 = splat2.position[0];
             var y2 = splat2.position[1];
-            var r2 = splat2.height/2;
+            var r2 = splat2.height / 2;
 
             var circle1 = {radius: r1, x: x1, y: y1};
             var circle2 = {radius: r2, x: x2, y: y2};
@@ -388,18 +427,45 @@
             }
         }
 
-        function checkcolisions() {
+        function colisionModelSplat(model, splat) {
+            var positions = model.getBBox();
+
+            var x1 = positions[0][0];
+            var x2 = positions[1][0];
+            var y1 = positions[0][1];
+            var y2 = positions[1][1];
+
+            if (splat.position[0] > x1 && splat.position[0] < x2 && splat.position[1] > y1 && splat.position[1] < y2) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function checkColisionsEnemies() {
 
             //check des tirs sur les ennemis
             shootSampleArray.forEach((shoot) => {
                 enemies.forEach((enemy) => {
-                   if (colision(enemy, shoot)) {
-                       enemy.clear();
-                       shoot.clear();
-                       shootSampleArray.splice(shootSampleArray.indexOf(shoot), 1);
-                       enemies.splice(enemies.indexOf(enemy), 1);
-                   }
+                    if (colisionSplatSplat(enemy, shoot)) {
+                        enemy.clear();
+                        shoot.clear();
+                        shootSampleArray.splice(shootSampleArray.indexOf(shoot), 1);
+                        enemies.splice(enemies.indexOf(enemy), 1);
+                    }
                 });
+            });
+        }
+
+        function checkColisionsBonus() {
+
+            //check des tirs sur les ennemis
+            bonusArray.forEach((bonus) => {
+                if (colisionModelSplat(spaceship, bonus)) {
+                    ultimateShootOK = true;
+                    bonus.clear();
+                    bonusArray.splice(bonusArray.indexOf(bonus), 1);
+                }
             });
         }
 
@@ -407,7 +473,8 @@
             requestAnimFrame(tick);
             handleKeys();
             drawScene();
-            checkcolisions();
+            checkColisionsEnemies();
+            checkColisionsBonus();
             animate();
         }
 
@@ -420,7 +487,12 @@
             // test: création d'une texture
             tex = initTexture('textures/ballon.png');
             texEnemy = initTexture('textures/cage-foot.png');
+<<<<<<< Updated upstream
             texField = initTexture('textures/soccer_field.png');
+=======
+            texUltimate = initTexture('textures/ballon-in-fire.png');
+            texBonus = initTexture('textures/arrow-up.png');
+>>>>>>> Stashed changes
 
             initBackgroundShader();
             initModelShader();
@@ -447,6 +519,7 @@
 
             //Spawn ennemie
             setInterval(spawnEnemy, 5000);
+            setInterval(spawnBonus, 2000);
 
             // dessine la scene
             tick();
