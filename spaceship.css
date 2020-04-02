@@ -1,0 +1,46 @@
+@font-face {
+    font-family: "Scoreboard";
+    src: url('fonts/scoreboard.ttf');
+}
+
+#footer {
+    background-color: darkgreen;
+    background-image: url("textures/soccer_field.png");
+    position: absolute;
+    height: 150px;
+    width: 794px;
+    border: 3px white solid;
+}
+
+
+#score {
+    font-family: "Scoreboard";
+    font-size: 44px;
+    width: 44px;
+    height: 55px;
+    background-color: white;
+    margin: 0 auto;
+}
+
+#score span {
+    margin-left: 10px;
+}
+
+h2 {
+    padding: 0;
+    margin: 0;
+    margin-left: 340px!important;
+    font-size: 44px;
+    font-family: "Scoreboard";
+    color: white;
+}
+
+#lifes {
+    display: flex;
+    flex-direction: row;
+}
+
+.img_life {
+    width: 33px;
+    height: 33px;
+}

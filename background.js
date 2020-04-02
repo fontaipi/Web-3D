@@ -27,8 +27,8 @@ function Background() {
     
     
     var coords = [
-	0.0, 0.0, 
-	1.0, 0.0, 
+	0.0, .0,
+	1.0, 0.0,
 	1.0, 1.0, 
 	0.0, 1.0
     ];
@@ -43,7 +43,7 @@ function Background() {
     // cree un nouveau buffer sur le GPU et l'active
     this.vertexBuffer = gl.createBuffer();
     this.vertexBuffer.itemSize = 3;
-    this.vertexBuffer.numItems = 4;
+    this.vertexBuffer.numItems = 3;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.enableVertexAttribArray(0);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -52,7 +52,7 @@ function Background() {
     // meme principe pour les coords de texture
     this.coordBuffer = gl.createBuffer();
     this.coordBuffer.itemSize = 2;
-    this.coordBuffer.numItems = 4;
+    this.coordBuffer.numItems = 2;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.coordBuffer);
     gl.enableVertexAttribArray(1);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(coords), gl.STATIC_DRAW);
@@ -78,8 +78,8 @@ Background.prototype.initParameters = function() {
     this.timer = 0.0;
     this.offset = [0.0,0.0];
     this.amplitude = 1.0;
-    this.frequency = 30.0;
-    this.persistence = 0.45;
+    this.frequency = 10.0;
+    this.persistence = 0.85;
 }
 
 Background.prototype.setParameters = function(elapsed) {
@@ -90,6 +90,7 @@ Background.prototype.setParameters = function(elapsed) {
 
 Background.prototype.sendUniformVariables = function() {
     // fonction appelée avant le dessin : envoie de toutes les variables au shader
+
     gl.uniform2fv(backgroundShader.offsetUniform,this.offset);
     gl.uniform1f(backgroundShader.amplitudeUniform,this.amplitude);
     gl.uniform1f(backgroundShader.frequencyUniform,this.frequency);
