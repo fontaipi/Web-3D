@@ -77,15 +77,9 @@ Background.prototype.initParameters = function() {
     // paramètres envoyés au shader pour générer le fond
     this.timer = 0.0;
     this.offset = [0.0,0.0];
-<<<<<<< Updated upstream
-    this.amplitude = 1.0;
-    this.frequency = 10.0;
-    this.persistence = 0.85;
-=======
     this.amplitude = 3.0;
     this.frequency = 40.0;
     this.persistence = 0.5;
->>>>>>> Stashed changes
 }
 
 Background.prototype.setParameters = function(elapsed) {

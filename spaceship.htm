@@ -102,7 +102,7 @@
       //rgb = (58, 137, 35)
       vec3 vert = vec3(0.23, 0.53, 0.14);
 
-	  // décalage avec la variable uOffset
+	  // dï¿½calage avec la variable uOffset
 	  vec2 p = vTextureCoord*2.0-vec2(1.0)+uOffset;
 
 	  //float d = computeHeight(p); // profondeur au point p
@@ -194,10 +194,10 @@
       void main(void) {
 	  float alpha = 1.-smoothstep(0.2,0.25,distance(vec2(.5),vTextureCoord));
 
-	  // TEST: affichae d'un point avec la couleur donnée en paramètre
+	  // TEST: affichae d'un point avec la couleur donnï¿½e en paramï¿½tre
 	  //outColor = vec4(alpha*maCouleur,alpha);
 
-	  // TEST: affichage d'une texture donnée en paramètre
+	  // TEST: affichage d'une texture donnï¿½e en paramï¿½tre
 	  outColor = texture(uTex,vTextureCoord);
       }
 
@@ -226,7 +226,7 @@
             // efface les buffers de couleur et de profondeur
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-            // dessin du fond (décommenter pour travailler dessus)
+            // dessin du fond (dï¿½commenter pour travailler dessus)
             gl.useProgram(background.shader());
             background.sendUniformVariables();
             background.draw();
@@ -237,7 +237,7 @@
             spaceship.draw();
 
             // test pour afficher un splat quand on appuie sur espace
-            gl.enable(gl.BLEND); // transparence activée
+            gl.enable(gl.BLEND); // transparence activï¿½e
 
             shootSampleArray.forEach((item) => {
                 gl.useProgram(item.shader());
@@ -257,7 +257,7 @@
                 item.draw();
             });
 
-            gl.disable(gl.BLEND); // transparence désactivée
+            gl.disable(gl.BLEND); // transparence dï¿½sactivï¿½e
         }
 
         // une bonne maniere de gerer les evenements claviers
@@ -308,10 +308,10 @@
                 }
 
                 // exemple: comment positionner un splat devant le vaisseau
-                var p = spaceship.getBBox(); // boite englobante du vaisseau sur l'écran
+                var p = spaceship.getBBox(); // boite englobante du vaisseau sur l'ï¿½cran
                 var x = (p[0][0] + p[1][0]) / 2;
                 var y = p[1][1];
-                var z = p[1][2] + 0.005; // profondeur du splat (juste derrière le vaisseau)
+                var z = p[1][2] + 0.005; // profondeur du splat (juste derriï¿½re le vaisseau)
 
                 if (!fired && shootSampleArray.length < maxShoot) {
                     fired = true;
@@ -340,11 +340,11 @@
         var lastTime = 0;
 
         function animate() {
-            // fonction appelée à chaque frame, permet d'animer la scène
+            // fonction appelï¿½e ï¿½ chaque frame, permet d'animer la scï¿½ne
             var timeNow = new Date().getTime();
             if (lastTime != 0) {
                 // anime chacun des objets de la scene
-                // si necessaire (en fonction du temps ecoulé)
+                // si necessaire (en fonction du temps ecoulï¿½)
                 var elapsed = timeNow - lastTime;
                 spaceship.setParameters(elapsed);
                 background.setParameters(elapsed);
@@ -484,15 +484,12 @@
             var canvas = document.getElementById("SpaceShip");
             initGL(canvas);
 
-            // test: création d'une texture
+            // test: crï¿½ation d'une texture
             tex = initTexture('textures/ballon.png');
             texEnemy = initTexture('textures/cage-foot.png');
-<<<<<<< Updated upstream
             texField = initTexture('textures/soccer_field.png');
-=======
             texUltimate = initTexture('textures/ballon-in-fire.png');
             texBonus = initTexture('textures/arrow-up.png');
->>>>>>> Stashed changes
 
             initBackgroundShader();
             initModelShader();
@@ -501,13 +498,13 @@
             background = new Background();
             spaceship = new Model('models/pogba.obj');
 
-            // la couleur de fond sera grise foncée
+            // la couleur de fond sera grise foncï¿½e
             gl.clearColor(0.3, 0.3, 0.3, 1.0);
 
             // active le test de profondeur
             gl.enable(gl.DEPTH_TEST);
 
-            // fonction de mélange utilisée pour la transparence
+            // fonction de mï¿½lange utilisï¿½e pour la transparence
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
             /* Mouse and keyboard interaction functions */
